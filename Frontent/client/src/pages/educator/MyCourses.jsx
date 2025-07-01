@@ -47,9 +47,9 @@ const MyCourses = () => {
                 <span className='truncate hidden md:block'>{course.courseTitle}</span>
                 </td>
                 <td className='px-4 py-3'>
-                 {currency} {Math.floor(course.enrolledStudents.length * (course.coursePrice-course.discount * course.coursePrice/100))}
+                 {currency} {Math.floor((course.enrolledStudents?.length || 0) * (course.coursePrice-course.discount * course.coursePrice/100))}
                 </td>
-                <td className='px-4 py-3'>{course.enrolledStudents.length}</td>
+                <td className='px-4 py-3'>{course.enrolledStudents?.length || 0}</td>
                 <td className='px-4 py-3'>{ new Date(course.createdAt).toLocaleDateString()}</td>
               </tr>
              ))}

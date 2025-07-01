@@ -1,19 +1,33 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { AppContext } from '../../context/AppContext';
 import { assets, dummyDashboardData } from '../../assets/assets';
-import Loading from '../../components/students/Loading';
+import Loading from '../../components/students/Loading.jsx';
+import axios from 'axios';
 const Dashboard = () => {
 
-  const {currency}=useContext(AppContext)
+  const {currency,backendUrl,isEducator,getToken}=useContext(AppContext)
   const [dashboardData,setDashboardData]=useState(null);
 
 const fetchDashboardData=async()=>{
-setDashboardData(dummyDashboardData);
+  try {
+    const token=await getToken();
+    const {data}=await axios.get(`${backendUrl}/api/educator/dashboard`,{headers:{Authorization:`Bearer ${token}`}})
+    if(data.success){
+      setDashboardData(data.dashboardData);
+    }
+    else{
+      toast.error(data.message);
+    }
+  } catch (error) {
+    toast.error(error.message);
+  }
 }
 
 useEffect(()=>{
+  if(isEducator){
 fetchDashboardData()
-},[])
+  }
+},[isEducator])
   return dashboardData ? (
     <div className='min-h-screen flex flex-col items-start justify-between gap-8 md:p-8 md:pb-0 p-4 pt-8 pb-0'>
     <div className='space-y-5'>
@@ -35,7 +49,7 @@ fetchDashboardData()
   
     <div className='flex items-center gap-3 shadow-2xl border border-blue-500 p-4 w-56 rounded-md'><img src={assets.earning_icon} alt="" />
     <div>
-    <p className='text-2xl font-medium text-gray-500'>{dashboardData.totalEarnings}</p>
+    <p className='text-2xl font-medium text-gray-500'>{currency}{dashboardData.totalEarnings}</p>
     <p className='text-base text-gray-500'>Total Earning</p>
   </div>
   </div>

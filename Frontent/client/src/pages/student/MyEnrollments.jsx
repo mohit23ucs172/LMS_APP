@@ -56,7 +56,7 @@ useEffect(()=>{
           </tr>
         </thead>
         <tbody className='text-gray-700'>
-          {enrolledCourses.map((course,index)=>(
+          {enrolledCourses?.map((course,index)=>(
             <tr key={index} className='border border-gray-500/20'>
               <td className='md:px-4 pl-2 md:pl-4 py-3 flex items-center space-x-3'>
                 <img src={course.courseThumbnail} alt="" className='w-14 sm:w-24 md:w-28'/>

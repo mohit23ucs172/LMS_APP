@@ -94,8 +94,8 @@ const toggleSection=(index)=>{
                     <img className='w-3.5 h-3.5' key={i} src={i<Math.floor(calculateRating(courseData))?assets.star:assets.star_blank} alt='' />
                   ))}
                 </div>
-                <p className='text-blue-600'>{courseData.courseRatings.length} {courseData.courseRatings.length>1?"ratings":"rating"}</p>
-                <p>{courseData.enrolledStudents.length} {courseData.enrolledStudents.length>1?'students':'student'}</p>
+                <p className='text-blue-600'>{courseData.courseRatings?.length||0} {courseData.courseRatings?.length>1?"ratings":"rating"}</p>
+                <p>{courseData.enrolledStudents?.length||0} {courseData.enrolledStudents?.length>1?'students':'student'}</p>
               </div>
               <p className='text-sm'>Course by <span className='text-blue-600 underline'>{courseData.educator.name}</span></p>
 
@@ -109,7 +109,7 @@ const toggleSection=(index)=>{
                                 <img className={`transform transition-transform ${openSection[index]?'rotate-180':''}`} src={assets.down_arrow_icon} alt="" />
                                 <p className='font-medium md:text-base text-sm'>{chapter.chapterTitle}</p>
                               </div>
-                              <p className='text-sm md:text-1xl'>{chapter.chapterContent.length} lectures - {calculateChapterTime(chapter)}</p>
+                              <p className='text-sm md:text-1xl'>{(Array.isArray(chapter.chapterContent) ? chapter.chapterContent.length : 0)} lectures - {calculateChapterTime(chapter)}</p>
                             </div>
                             <div className={`overflow-hidden transition-all duration-300 ${openSection[index]?'max-h-96':'max-h-0'}`}>
                               <ul className='list-disc md:pl-10 pl-4 pr-4 py-2 text-gray-600 border-t border-gray-300'>

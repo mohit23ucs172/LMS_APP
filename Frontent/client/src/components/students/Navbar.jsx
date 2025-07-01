@@ -16,7 +16,7 @@ const {navigate,isEducator,setIsEducator,backenUrl,getToken}=useContext(AppConte
 const becomeEducator=async()=>{
   try {
   if(isEducator){
-    navigate('/')
+    navigate('/educator')
     return;
   }
   const token=await getToken()

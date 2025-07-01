@@ -11,8 +11,8 @@ const Loading = () => {
       const timer=setTimeout(()=>{
    navigate(`/${path}`)
       },5000)
+      return ()=>clearTimeout(timer);
     }
-    return ()=>clearTimeout(timer);
   })
   return (
     <div className='min-h-screen flex items-center justify-center'>

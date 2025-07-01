@@ -16,10 +16,10 @@ const currency=import.meta.env.VITE_CURRENCY
 const navigate=useNavigate();
 
 const {getToken}=useAuth();
-const {user}=useUser()
+const {isLoaded,user}=useUser()
 
 const [allCourses,setAllCourses]=useState([]);
-const [enrolledCourses,setEnrolledCourses]=useState(null);
+const [enrolledCourses,setEnrolledCourses]=useState([]);
 const [isEducator,setIsEducator]=useState(false);
 const [userData,setUserData]=useState(null)
 
@@ -29,14 +29,13 @@ const fetchAllCourses=async()=>{
 try {
  const {data}= await axios.get(backendUrl+'/api/course/all');
  if(data.success){
-  setAllCourses(data.course)
+  setAllCourses(data.courses);
  }else{
   toast.error(data.message);
  }
 
 } catch (error) {
   toast.error(error.message);
-  
 }
 }
 
@@ -48,7 +47,7 @@ const fetchUserData=async()=>{
   }
   try {
     const token=await getToken();
-
+  console.log(token); 
    const {data}= await axios.get(backendUrl+'/api/user/data',{headers:{Authorization:`Bearer ${token}`}})
    if(data.success){
     setUserData(data.user)
@@ -65,7 +64,7 @@ const fetchUserData=async()=>{
 //function to calculate average rating of coourse
 
 const calculateRating=(course)=>{
-  if(course.courseRatings===0){
+   if (!Array.isArray(course.courseRatings) || course.courseRatings.length === 0) {
     return 0;
   }
   let totalRating=0;
@@ -85,29 +84,40 @@ const calculateChapterTime=(chapter)=>{
 }
 
 //function to calculate course duration
-const calculateCourseDuration=(course)=>{
-  let time=0;
-  course.courseContent.map((chapter)=>chapter.chapterContent.map((lecture)=>time+=lecture.lectureDuration));
-  return humanizeDuration(time*60*1000,{units:["h","m"]})
+const calculateCourseDuration = (course) => {
+  let time = 0;
 
-}
+  course.courseContent?.forEach((chapter) => {
+    if (Array.isArray(chapter.chapterContent)) {
+      chapter.chapterContent.forEach((lecture) => {
+        time += lecture.lectureDuration;
+      });
+    }
+  });
+
+  return humanizeDuration(time * 60 * 1000, { units: ["h", "m"] });
+};
+
 
 // function to calculate to No of lectures in the course
 
-const calculateNoOfLecture=(course)=>{
-  let totalLectures=0;
-  course.courseContent.forEach(chapter=>{
-  if(Array.isArray(chapter.chapterContent)){
-    totalLectures+=chapter.chapterContent.length;
-  }
-  })
+const calculateNoOfLecture = (course) => {
+  let totalLectures = 0;
+
+  course.courseContent?.forEach((chapter) => {
+    if (Array.isArray(chapter.chapterContent)) {
+      totalLectures += chapter.chapterContent.length;
+    }
+  });
+
   return totalLectures;
-}
+};
+
 
 //fetch user Enrolled courses
 const fetchUserEnrolledCourses=async()=>{
   try {
-  const token=getToken();
+  const token=await getToken();
   const {data}=await axios.get(backendUrl+'/api/user/enrolled-courses',{headers:{
     Authorization:`Bearer ${token}`
   }})
@@ -115,7 +125,7 @@ const fetchUserEnrolledCourses=async()=>{
   if(data.success){
     setEnrolledCourses(data.enrolledCourses.reverse())
   }else{
-    toast.error(data.message);
+    toast.error("something went wrong");
   }
 } catch (error) {
     toast.error(error.message);
@@ -123,9 +133,11 @@ const fetchUserEnrolledCourses=async()=>{
 }
 
 useEffect(()=>{
-fetchAllCourses()
-fetchUserEnrolledCourses()
-},[])
+  if(isLoaded && user){
+    fetchAllCourses()
+    fetchUserEnrolledCourses()
+  }
+},[isLoaded,user])
 
 
 useEffect(()=>{
