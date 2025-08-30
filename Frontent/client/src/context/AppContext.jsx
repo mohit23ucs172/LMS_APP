@@ -13,6 +13,8 @@ export const AppContextProvider=(props)=>{
 
   const backendUrl=import.meta.env.VITE_BACKEND_URL
 const currency=import.meta.env.VITE_CURRENCY
+  console.log("Backend URL from env:", backendUrl);
+
 const navigate=useNavigate();
 
 const {getToken}=useAuth();
