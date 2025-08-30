@@ -18,7 +18,7 @@ const app=express();
 await connectDB()
 await conncetCloudinary();
 
-app.post('/stripe',express.raw({tpye:'application/json'}),stripeWebhooks)
+app.post('/stripe',express.raw({type:'application/json'}),stripeWebhooks)
 
 
 //Middlewares
@@ -35,8 +35,15 @@ app.use('/api/course',express.json(),courseRouter)
 app.use('/api/user',express.json(),userRouter)
 
 //port
-const PORT=process.env.PORT || 5000
+const PORT = process.env.PORT || 5000;
 
-app.listen(PORT,()=>{
-  console.log(`Server is running on port http://localhost:${PORT} `)
-})
+// Start the server
+if(process.env.NODE_ENV!=="production"){
+
+  app.listen(PORT, () => {
+    console.log(`Server is running on port: ${PORT}`);
+  });
+}
+
+//Export server for vercel
+export default app;
